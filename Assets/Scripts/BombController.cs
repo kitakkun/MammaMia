@@ -8,11 +8,16 @@ public class BombController : MonoBehaviour
     [SerializeField] private ParticleSystem explodeEffect;
 
     private SpriteRenderer[] _renderers;
-    private bool _isAlreadyTriggered = false;
+    private SpriteRenderer[] _childRenderers;
+    private ParticleSystem _sparkParticleSystem;
+    private bool _isAlreadyTriggered;
 
     void Start()
     {
         _renderers = GetComponents<SpriteRenderer>();
+        _childRenderers = GetComponentsInChildren<SpriteRenderer>();
+        _sparkParticleSystem = GetComponentInChildren<ParticleSystem>();
+        _isAlreadyTriggered = false;
     }
 
     private void OnCollisionEnter2D(Collision2D _)
@@ -45,6 +50,13 @@ public class BombController : MonoBehaviour
         {
             spriteRenderer.enabled = false;
         }
+
+        foreach (var spriteRenderer in _childRenderers)
+        {
+            spriteRenderer.enabled = false;
+        }
+
+        _sparkParticleSystem.Stop();
     }
 
     private void BlowOffNearObjects()
