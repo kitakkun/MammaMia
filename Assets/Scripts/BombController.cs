@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BombController : MonoBehaviour
@@ -18,12 +19,14 @@ public class BombController : MonoBehaviour
         _childRenderers = GetComponentsInChildren<SpriteRenderer>();
         _sparkParticleSystem = GetComponentInChildren<ParticleSystem>();
         _isAlreadyTriggered = false;
+        _sparkParticleSystem.Stop();
     }
 
     private void OnCollisionEnter2D(Collision2D _)
     {
         if (_isAlreadyTriggered) return;
         _isAlreadyTriggered = true;
+        _sparkParticleSystem.Play();
         Invoke(nameof(Explode), timeToBomb);
     }
 
@@ -67,8 +70,8 @@ public class BombController : MonoBehaviour
         foreach (var hitCollider in hitColliders)
         {
             var targetRigidBody = hitCollider.gameObject.GetComponent<Rigidbody2D>();
-            var direction = (targetRigidBody.position - new Vector2(selfPosition.x, selfPosition.y)).normalized;
             if (targetRigidBody == null) continue;
+            var direction = (targetRigidBody.position - new Vector2(selfPosition.x, selfPosition.y)).normalized;
             targetRigidBody.AddForce(force: direction * explodePower, ForceMode2D.Impulse);
         }
     }
